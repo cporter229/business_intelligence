@@ -11,9 +11,29 @@ output:
     code_download: TRUE
 ---
 
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+# Crashes Per Day
+```{r cincy_crashes=}
+crashes_per_day = 30125 / 365
+crashes_per_day
+```
+
+## Type of 'crashes_by_day'
+
+```{r}
+typeof (crashes_by_day)
+
+crashes_by_day_int = c(2020L, 2241L, 2327L, 2285,
+                       2380L, 1866L, 1664L)
+names(crashes_by_day) = c("Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+
+crashes_by_day_int 
+```
+
 
 ## R Markdown
 
