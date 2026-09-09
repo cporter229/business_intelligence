@@ -1,0 +1,69 @@
+---
+title: "Class 05"
+author: "Carson Porter"
+date: "2026-09-09"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    numbered_solutions: true
+    code_floding: show
+    code_download: true
+    
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Game 01: Find your seat
+
+```{r}
+campus = jsonlite::fromJSON(
+  "https://isa401-find-your-seat.vercel.app/campus.json")
+
+dplyr::glimpse(campus)
+
+fsb = campus [['Farmer']] # campus$Farmer; or campus[[5]]
+fsb$code
+
+sec_floor = fsb$floors[["2"]]
+campus$Farmer$floors[["2"]]
+sec_floor$sections
+
+#equivalent
+fsb$floors[[3]]$sectiosn # using the position instead of the name of the list
+
+campus$Farmer$floors$rooms[["5"]]
+
+r = campus$Farmer$floors[["2"]]$rooms
+r$isa_sections[r$room == "2050"]
+
+df = sec_floor$rooms
+df # or equivalently sec_floor$rooms
+df[6,2]
+```
+
+
+## Reading the Excel File
+
+#```{r read_excel}
+occupation = readxl::read_excel(
+  path = "M:/business_intelligence/data/occupation.xlsx", sheet = "Table 1.4", skip = 1)
+
+# optional: clean the bottom three rows
+occupation = occupation[-c(32,33,34), ]# delete three specific rows, keep all cols (since after the, is empty) --> 1:7
+
+
+## Game 2
+
+```{r game02}
+logins = readr::read_csv("../data/stage1.csv")
+
+log = jsonlite::fromJSON("https://isa401-import-heist.vercel.app/api/stage2?key=smithj31&seat=L1-7&s=A")
+
+stage2 = log$events
+
+jsonlite::fromJSON("https://isa401-import-heist.vercel.app/api/finish?code=6&seat=L1-7&s=A")
+```
+
