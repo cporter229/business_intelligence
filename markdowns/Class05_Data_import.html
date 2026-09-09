@@ -1715,8 +1715,90 @@ df # or equivalently sec_floor$rooms</code></pre>
 <pre class="r"><code>df[6,2]</code></pre>
 <pre><code>## [1] 11</code></pre>
 </div>
+<div id="reading-the-excel-file" class="section level2">
+<h2>Reading the Excel File</h2>
+<p>#```{r read_excel} occupation = readxl::read_excel( path =
+“M:/business_intelligence/data/occupation.xlsx”, sheet = “Table 1.4”,
+skip = 1)</p>
+</div>
+<div id="optional-clean-the-bottom-three-rows" class="section level1">
+<h1>optional: clean the bottom three rows</h1>
+<p>occupation = occupation[-c(32,33,34), ]# delete three specific rows,
+keep all cols (since after the, is empty) –&gt; 1:7</p>
+<div id="game-2" class="section level2">
+<h2>Game 2</h2>
+<pre class="r"><code>logins = readr::read_csv(&quot;../data/stage1.csv&quot;)</code></pre>
+<pre><code>## Rows: 7 Columns: 6
+## ── Column specification ────────────────────────────────────────────────────────
+## Delimiter: &quot;,&quot;
+## chr  (4): account, country, source_ip, mfa
+## dbl  (1): failed_attempts
+## dttm (1): sign_in_time
+## 
+## ℹ Use `spec()` to retrieve the full column specification for this data.
+## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
+<pre class="r"><code>log = jsonlite::fromJSON(&quot;https://isa401-import-heist.vercel.app/api/stage2?key=smithj31&amp;seat=L1-7&amp;s=A&quot;)
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkNsYXNzIDA1Ig0KYXV0aG9yOiAiQ2Fyc29uIFBvcnRlciINCmRhdGU6ICIyMDI2LTA5LTA5Ig0Kb3V0cHV0OiANCiAgaHRtbF9kb2N1bWVudDoNCiAgICB0b2M6IHRydWUNCiAgICB0b2NfZmxvYXQ6IHRydWUNCiAgICBudW1iZXJlZF9zb2x1dGlvbnM6IHRydWUNCiAgICBjb2RlX2Zsb2Rpbmc6IHNob3cNCiAgICBjb2RlX2Rvd25sb2FkOiB0cnVlDQogICAgDQotLS0NCg0KYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9DQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUpDQpgYGANCg0KIyMgR2FtZSAwMTogRmluZCB5b3VyIHNlYXQNCg0KYGBge3J9DQpjYW1wdXMgPSBqc29ubGl0ZTo6ZnJvbUpTT04oDQogICJodHRwczovL2lzYTQwMS1maW5kLXlvdXItc2VhdC52ZXJjZWwuYXBwL2NhbXB1cy5qc29uIikNCg0KZHBseXI6OmdsaW1wc2UoY2FtcHVzKQ0KDQpmc2IgPSBjYW1wdXMgW1snRmFybWVyJ11dICMgY2FtcHVzJEZhcm1lcjsgb3IgY2FtcHVzW1s1XV0NCmZzYiRjb2RlDQoNCnNlY19mbG9vciA9IGZzYiRmbG9vcnNbWyIyIl1dDQpjYW1wdXMkRmFybWVyJGZsb29yc1tbIjIiXV0NCnNlY19mbG9vciRzZWN0aW9ucw0KDQojZXF1aXZhbGVudA0KZnNiJGZsb29yc1tbM11dJHNlY3Rpb3NuICMgdXNpbmcgdGhlIHBvc2l0aW9uIGluc3RlYWQgb2YgdGhlIG5hbWUgb2YgdGhlIGxpc3QNCg0KY2FtcHVzJEZhcm1lciRmbG9vcnMkcm9vbXNbWyI1Il1dDQoNCnIgPSBjYW1wdXMkRmFybWVyJGZsb29yc1tbIjIiXV0kcm9vbXMNCnIkaXNhX3NlY3Rpb25zW3Ikcm9vbSA9PSAiMjA1MCJdDQoNCmRmID0gc2VjX2Zsb29yJHJvb21zDQpkZiAjIG9yIGVxdWl2YWxlbnRseSBzZWNfZmxvb3Ikcm9vbXMNCmRmWzYsMl0NCmBgYA0KDQoNCg==</div>
+stage2 = log$events
+
+jsonlite::fromJSON(&quot;https://isa401-import-heist.vercel.app/api/finish?code=6&amp;seat=L1-7&amp;s=A&quot;)</code></pre>
+<pre><code>## $status
+## [1] &quot;CLEARED&quot;
+## 
+## $verdict
+## [1] &quot;Account smithj31 was compromised by password guessing (17 failed attempts, then a successful sign-in from Romania at 02:31 without MFA). In the next 27 minutes, 6 files (28.1 MB) were downloaded from the FSB shared drive, including payroll, an employee roster, and survey responses with PII, and fsb_shared/README.txt was overwritten at 02:57 (restored from the drive&#39;s version history).&quot;
+## 
+## $report
+## $report$incident
+## [1] &quot;INC-2026-0902&quot;
+## 
+## $report$compromised_account
+## [1] &quot;smithj31&quot;
+## 
+## $report$attack
+## [1] &quot;password guessing (17 failed attempts before success)&quot;
+## 
+## $report$source_country
+## [1] &quot;Romania&quot;
+## 
+## $report$source_ip
+## [1] &quot;203.0.113.57&quot;
+## 
+## $report$mfa_used
+## [1] &quot;no&quot;
+## 
+## $report$session_window
+## [1] &quot;02:31 to 02:58&quot;
+## 
+## $report$files_downloaded
+## [1] 6
+## 
+## $report$data_downloaded_mb
+## [1] 28.1
+## 
+## $report$highest_risk_file
+## [1] &quot;fsb_shared/research/survey_responses_pii.csv&quot;
+## 
+## $report$files_overwritten
+## [1] 1
+## 
+## 
+## $containment
+## [1] &quot;Disable smithj31 and reset its credentials&quot;                                   
+## [2] &quot;Require MFA on every VPN sign-in&quot;                                             
+## [3] &quot;Notify the owners of the 6 downloaded files, starting with the PII export&quot;    
+## [4] &quot;Block the source address 203.0.113.57 and review sign-ins from outside the US&quot;
+## [5] &quot;Restore fsb_shared/README.txt from version history (overwritten at 02:57)&quot;    
+## 
+## $replay
+## [1] &quot;https://isa401-import-heist.vercel.app/replay&quot;
+## 
+## $message
+## [1] &quot;Incident closed. Open the replay address above in your browser to watch the incident unfold from the two files you imported, then look up: your seat is lit red on the projector board.&quot;</code></pre>
+</div>
+</div>
+
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkNsYXNzIDA1Ig0KYXV0aG9yOiAiQ2Fyc29uIFBvcnRlciINCmRhdGU6ICIyMDI2LTA5LTA5Ig0Kb3V0cHV0OiANCiAgaHRtbF9kb2N1bWVudDoNCiAgICB0b2M6IHRydWUNCiAgICB0b2NfZmxvYXQ6IHRydWUNCiAgICBudW1iZXJlZF9zb2x1dGlvbnM6IHRydWUNCiAgICBjb2RlX2Zsb2Rpbmc6IHNob3cNCiAgICBjb2RlX2Rvd25sb2FkOiB0cnVlDQogICAgDQotLS0NCg0KYGBge3Igc2V0dXAsIGluY2x1ZGU9RkFMU0V9DQprbml0cjo6b3B0c19jaHVuayRzZXQoZWNobyA9IFRSVUUpDQpgYGANCg0KIyMgR2FtZSAwMTogRmluZCB5b3VyIHNlYXQNCg0KYGBge3J9DQpjYW1wdXMgPSBqc29ubGl0ZTo6ZnJvbUpTT04oDQogICJodHRwczovL2lzYTQwMS1maW5kLXlvdXItc2VhdC52ZXJjZWwuYXBwL2NhbXB1cy5qc29uIikNCg0KZHBseXI6OmdsaW1wc2UoY2FtcHVzKQ0KDQpmc2IgPSBjYW1wdXMgW1snRmFybWVyJ11dICMgY2FtcHVzJEZhcm1lcjsgb3IgY2FtcHVzW1s1XV0NCmZzYiRjb2RlDQoNCnNlY19mbG9vciA9IGZzYiRmbG9vcnNbWyIyIl1dDQpjYW1wdXMkRmFybWVyJGZsb29yc1tbIjIiXV0NCnNlY19mbG9vciRzZWN0aW9ucw0KDQojZXF1aXZhbGVudA0KZnNiJGZsb29yc1tbM11dJHNlY3Rpb3NuICMgdXNpbmcgdGhlIHBvc2l0aW9uIGluc3RlYWQgb2YgdGhlIG5hbWUgb2YgdGhlIGxpc3QNCg0KY2FtcHVzJEZhcm1lciRmbG9vcnMkcm9vbXNbWyI1Il1dDQoNCnIgPSBjYW1wdXMkRmFybWVyJGZsb29yc1tbIjIiXV0kcm9vbXMNCnIkaXNhX3NlY3Rpb25zW3Ikcm9vbSA9PSAiMjA1MCJdDQoNCmRmID0gc2VjX2Zsb29yJHJvb21zDQpkZiAjIG9yIGVxdWl2YWxlbnRseSBzZWNfZmxvb3Ikcm9vbXMNCmRmWzYsMl0NCmBgYA0KDQoNCiMjIFJlYWRpbmcgdGhlIEV4Y2VsIEZpbGUNCg0KI2BgYHtyIHJlYWRfZXhjZWx9DQpvY2N1cGF0aW9uID0gcmVhZHhsOjpyZWFkX2V4Y2VsKA0KICBwYXRoID0gIk06L2J1c2luZXNzX2ludGVsbGlnZW5jZS9kYXRhL29jY3VwYXRpb24ueGxzeCIsIHNoZWV0ID0gIlRhYmxlIDEuNCIsIHNraXAgPSAxKQ0KDQojIG9wdGlvbmFsOiBjbGVhbiB0aGUgYm90dG9tIHRocmVlIHJvd3MNCm9jY3VwYXRpb24gPSBvY2N1cGF0aW9uWy1jKDMyLDMzLDM0KSwgXSMgZGVsZXRlIHRocmVlIHNwZWNpZmljIHJvd3MsIGtlZXAgYWxsIGNvbHMgKHNpbmNlIGFmdGVyIHRoZSwgaXMgZW1wdHkpIC0tPiAxOjcNCg0KDQojIyBHYW1lIDINCg0KYGBge3IgZ2FtZTAyfQ0KbG9naW5zID0gcmVhZHI6OnJlYWRfY3N2KCIuLi9kYXRhL3N0YWdlMS5jc3YiKQ0KDQpsb2cgPSBqc29ubGl0ZTo6ZnJvbUpTT04oImh0dHBzOi8vaXNhNDAxLWltcG9ydC1oZWlzdC52ZXJjZWwuYXBwL2FwaS9zdGFnZTI/a2V5PXNtaXRoajMxJnNlYXQ9TDEtNyZzPUEiKQ0KDQpzdGFnZTIgPSBsb2ckZXZlbnRzDQoNCmpzb25saXRlOjpmcm9tSlNPTigiaHR0cHM6Ly9pc2E0MDEtaW1wb3J0LWhlaXN0LnZlcmNlbC5hcHAvYXBpL2ZpbmlzaD9jb2RlPTYmc2VhdD1MMS03JnM9QSIpDQpgYGANCg0K</div>
 
 
 </div>
