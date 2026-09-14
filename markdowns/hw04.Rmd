@@ -1,0 +1,65 @@
+---
+title: "hw04"
+author: "Carson Porter"
+date: "2026-09-13"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    numbered_solutions: true
+    code_floding: show
+    code_download: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Question A1
+```{r}
+con = DBI::dbConnect(RSQLite::SQLite(), "../data/midwest_airbnb.db")
+listings = DBI::dbReadTable(con, "listings")
+
+nrow(listings)
+```
+
+## Question A2
+```{r}
+sum(listings$city == "Columbus")
+
+table(listings$city)
+```
+
+```{r}
+chicago <- listings[listings$city == "Chicago", ]
+```
+
+
+## Question A3
+```{r}
+chicago <- chicago[order(chicago$price, decreasing = TRUE), ]
+
+head(chicago, 1)
+```
+
+## Question A4
+```{r}
+length(unique(chicago$neighbourhood))
+```
+
+## Question A5
+```{r}
+sum(listings$host_is_superhost == "t", na.rm = TRUE)
+
+table(listings$host_is_superhost)
+```
+
+## Question A6
+```{r}
+sum(listings$price > 1000, na.rm = TRUE)
+
+table(listings$price > 1000)
+```
+
+
+

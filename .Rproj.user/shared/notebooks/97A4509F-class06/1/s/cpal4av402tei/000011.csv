@@ -1,0 +1,2 @@
+"0","con = DBI::dbConnect(RSQLite::SQLite(), ""../data/midwest_airbnb.db"")"
+"0","listings = DBI::dbReadTable(con, ""listings"")"
