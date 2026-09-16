@@ -1,0 +1,5 @@
+"0","con <- DBI::dbConnect(RSQLite::SQLite(), ""../data/scout.db"")"
+"0",""
+"0","DBI::dbListTables(con)"
+"1","character(0)
+"

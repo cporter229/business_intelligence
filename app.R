@@ -1,6 +1,8 @@
 # apps/job_scout_chat/app.R
 library(querychat)
 
+install.packages("querychat", dependencies = T)
+
 con = DBI::dbConnect(RSQLite::SQLite(), "data/scout.db")
 
 client = ellmer::chat_openai(

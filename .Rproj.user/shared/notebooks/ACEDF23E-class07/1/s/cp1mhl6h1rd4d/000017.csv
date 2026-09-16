@@ -1,0 +1,4 @@
+"0","con = DBI::dbConnect(RSQLite::SQLite(), ""../data/scout(1).db"")"
+"0","postings = DBI::dbReadTable(con, ""scout_postings"") |> tibble::as_tibble()"
+"2","Error: no such table: scout_postings
+"
