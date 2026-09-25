@@ -17,6 +17,10 @@ The app connects to a SQLite database (`data/scout.db`), hands the `scout_postin
 ### 2.Show me the priciest homes.
 ### 3.How many listings can host 8 people? 
 
+**Screenshots**
+![Answer to question 1](images/question1.png)
+![Answer to question 2](images/question2.png)
+![Answer to question 3](images/question3.png)
 ---
 
 ## Dataset Information
