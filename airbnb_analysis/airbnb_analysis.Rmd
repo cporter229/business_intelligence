@@ -1,0 +1,222 @@
+---
+title: "Assignment 06"
+author: "Carson Porter"
+date: "2026-09-27"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r Three Tables}
+con = DBI::dbConnect(RSQLite::SQLite(), "../data/midwest_airbnb_extended.db")
+
+listings = DBI::dbReadTable(con, "listings") |>
+  tibble::as_tibble()
+
+availability = DBI::dbReadTable(con, "availability_monthly") |>
+  tibble::as_tibble()
+
+reviews = DBI::dbReadTable(con, "reviews_monthly") |>
+  tibble::as_tibble()
+
+DBI::dbDisconnect(con)
+```
+
+## Task 1
+
+```{r A1}
+host_counts = listings |>
+  dplyr::count(host_id, name = "host_listings_count")
+host_counts |>
+  dplyr::filter(host_listings_count >= 10) |>
+  dplyr::summarize(ten_ormore_hosts = dplyr::n())
+```
+
+```{r A2}
+chicago_host_listings = listings |>
+  dplyr::left_join(host_counts, by = "host_id")
+
+chicago_host_listings |>
+  dplyr::filter(city == "Chicago") |>
+  dplyr::summarize(ten_percent_ormore = 100 * mean(host_listings_count >= 10)
+)
+```
+
+## Task 2
+```{r A3}
+columbus_lowest_median = listings |>
+  dplyr::filter(
+    room_type =="Entire home/apt",
+    accommodates >= 4,
+    number_of_reviews >= 10,
+    review_scores_rating >= 4.8
+  ) |>
+  dplyr::mutate(
+    price_per_person = price/accommodates
+  ) |>
+  dplyr::group_by(city,neighbourhood) |>
+  dplyr::summarize(
+    median_price_per_person = median(price_per_person, na.rm = TRUE),
+    listing_count = dplyr::n(),
+    .groups = "drop"
+  ) |>
+  dplyr::filter(listing_count >= 20)
+
+columbus_lowest_median |>
+  dplyr::filter(city == "Columbus") |>
+  dplyr::arrange(median_price_per_person)
+```
+
+## Task 3
+```{r A4}
+twin_cities_dollars = listings |>
+  dplyr::group_by(city, room_type) |>
+  dplyr::summarize(
+    dplyr::across(
+      c(price, reviews_per_month, estimated_revenue_l365d),
+      ~ median(.x, na.rm = TRUE)
+    ),
+    .groups = "drop"
+  )
+
+twin_cities_dollars |>
+  dplyr::filter(
+    city == "Twin Cities",
+    room_type == "Entire home/apt"
+  )
+```
+
+## Task 4
+```{r A5}
+columbus_top_ten_percent = listings |>
+  dplyr::group_by(city) |>
+  dplyr::arrange(
+    dplyr::desc(estimated_revenue_l365d),
+    .by_group = TRUE
+  ) |>
+  dplyr::mutate(
+    top_10 =dplyr::row_number() <= ceiling(.10 * dplyr::n())
+  ) |>
+  dplyr::ungroup()
+
+columbus_top_ten_percent |>
+  dplyr::filter(city == "Columbus") |>
+  dplyr::summarize(
+    percent_revenue_tope_ten = 100 * sum(estimated_revenue_l365d[top_10]) / sum(estimated_revenue_l365d)
+  )
+```
+
+## Task 5
+```{r A6 and A7}
+lowest_share = availability |>
+  dplyr::filter(month == "2026-10") |>
+  dplyr::inner_join(
+    listings |>
+      dplyr::filter(room_type == "Entire home/apt"),
+    by = "id"
+  ) |>
+  dplyr::mutate(
+    mostly_taken = nights_available < 0.5 * nights_in_month
+  ) |>
+  dplyr::group_by(city) |>
+  dplyr::summarize(
+    share_mostly_taken = mean(mostly_taken),
+    .groups = "drop"
+  ) |>
+  dplyr::arrange(share_mostly_taken)
+
+lowest_share
+```
+
+## Task 6 
+```{r A8}
+twin_cities_reviews = reviews |>
+  dplyr::inner_join(
+    listings |>
+      dplyr::select(id, city),
+    by = "id"
+  ) |>
+  dplyr::filter(
+    month >= "2025-07",
+    month <= "2026-06"
+  ) |>
+  dplyr::group_by(city, month) |>
+  dplyr::summarize(
+    total_reviews = sum(reviews),
+    .groups = "drop"
+  )
+
+twin_cities_reviews |>
+  dplyr::filter(city == "Twin Cities") |>
+  dplyr::arrange(dplyr::desc(total_reviews))
+```
+
+```{r A9}
+7399/3119
+```
+
+## Task 8
+```{r A10}
+no_rows = listings |>
+  dplyr::anti_join(
+    availability,
+    by = "id"
+  )
+no_rows |>
+  dplyr::summarize(
+    listings_with_no_availability = dplyr::n()
+  )
+```
+
+## Task 7
+```{r B1}
+superhost_premium = listings |> 
+  dplyr::filter(
+    room_type == "Entire home/apt",
+    host_is_superhost %in% c("t", "f")
+  ) |>
+  dplyr::group_by(city, host_is_superhost) |>
+  dplyr::summarize(
+    median_price = median(price, na.rm = TRUE),
+    median_rating = median(review_scores_rating, na.rm = TRUE),
+    .groups = "drop"
+  )
+
+superhost_premium
+```
+
+```{r B1 continued}
+291.75-248
+225-184.50
+266.93-268.31
+```
+
+```{r B2}
+b2_listing_share = chicago_host_listings |>
+  dplyr::group_by(city) |>
+  dplyr::summarize(
+    listing_share_10_plus =
+      100 * mean(host_listings_count >= 10),
+    .groups = "drop"
+  )
+
+b2_revenue_share = columbus_top_ten_percent |>
+  dplyr::group_by(city) |>
+  dplyr::summarize(
+    revenue_share_top_10 =
+      100 * sum(estimated_revenue_l365d[top_10]) /
+      sum(estimated_revenue_l365d),
+    .groups = "drop"
+  )
+
+b2_results = b2_listing_share |>
+  dplyr::left_join(
+    b2_revenue_share,
+    by = "city"
+  )
+
+b2_results
+```
+
