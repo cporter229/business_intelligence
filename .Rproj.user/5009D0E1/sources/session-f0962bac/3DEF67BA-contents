@@ -1,0 +1,73 @@
+---
+title: 'Class 10: Web Scraping'
+author: "Carson Porter"
+date: "2026-09-28"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    number_selections: true
+    code_download: true
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Robottxt
+
+The code chunk below will show the output from the [robottxt package](https://github.com/ropensci/robotstxt) for the ISA course bulletin available at:
+<https://bulletin.miamioh.edu/courses-instruction/isa/index.html>
+
+```{r robotstxt}
+robotstxt::paths_allowed(paths = "/courses-instruction/isa/", domain = "bulletin.miamioh.edu", bot = "*")
+```
+
+## robotstxt demos
+
+From the chunk below, we are allowed to scrape the [MU Football wiki page](https://en.wikipedia.org/wiki/Miami_RedHawks_football)
+```{r wiki}
+robotstxt::paths_allowed(paths = "/wiki/Miami_RedHawks_football", domain = "https://en.wikipedia.org", bot = "*")
+```
+
+From the chunk below, we are NOT allowed to scrape the [Linkedin Jobs Search](https://www.linkedin.com/jobs/)
+```{r linkedin}
+robotstxt::paths_allowed(paths = "/jobs/", domain = "www.linkedin.com", bot = "*")
+```
+From the chunk below, we are allowed to scrape the [Indeed Jobs and View Jobs Path](www.indeed.com/jobs/viewjobs)
+```{r indeed}
+robotstxt::paths_allowed(paths = "/jobs/viewjob", domain = "www.indeed.com", bot = "*")
+```
+
+## `rvest` demo: ISA course bulletin
+
+"{r rvest}
+isa_page_in_r = rvest::read_html("https://bulletin.miamioh.edu/courses-instruction/isa/")
+
+# extract the titles
+# if all titles look the same on the page, it means that they have the same tag/class, which would allow you to extract them in one step
+# we got the selector below by:
+## [a] highlighted the course
+## [b] right clicked and selected inspect
+## [c] found the part that was flushed containing the title
+## [d] right clicked and copied the selector
+## [e] I saw that the output from the code below just got me the 24th course so I dropped the `:nth-child(24)`
+isa_page_in_r |> 
+  rvest::html_element(
+    "#sc_sccoursedescs > div > p.courseblocktitle > strong"
+  ) |>
+  rvest::html_text2() -> isa_titles
+
+isa_page_in_r |>
+  rvest::html_elements(".courseblockdesc") |>
+  rvest::html_text2() _> isa_descs
+
+isa_df = data.fram(
+  title = isa_titles, description = isa_descs
+)"
+
+
+
+
+
