@@ -83,3 +83,17 @@ registry |> dplyr::filter(class == "Dreadnought") |>
 sum(Dreadnoughts_df$value)
 ```
 
+## All 50 courses
+
+```{r}
+chat = ellmer::chat_openai(
+  model = "gpt-5.6-luna",
+  params = ellmer::params(reasoning_effort = "home")
+)
+
+course_list = rvest::read_html("https://bulletin.miamioh.edu/courses-instrction/isa/") |> 
+  rvest::html_elements(".courseblock")
+  rvest::html_text2() |> #returns a chr vector
+  as.list()
+```
+

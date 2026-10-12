@@ -1,0 +1,74 @@
+---
+title: "Assignment07"
+author: "Carson Porter"
+date: "2026-10-06"
+output:
+  html_document:
+    toc: TRUE
+    toc_float: TRUE 
+    number_sections: TRUE 
+    code_folding: show
+    code_download: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+dept_urls = c(
+  "https://miamioh.edu/fsb/directory/?up=/query/all/all/Accountancy/all",
+  "https://miamioh.edu/fsb/directory/?up=/query/all/all/Economics/all",
+  "https://miamioh.edu/fsb/directory/?up=/query/all/all/Entrepreneurship/all",
+  "https://miamioh.edu/fsb/directory/?up=/query/all/all/Finance/all",
+  "https://miamioh.edu/fsb/directory/?up=/query/all/all/Information%20Systems%20--%20Analytics/all",
+  "https://miamioh.edu/fsb/directory/?up=/query/all/all/Marketing/all",
+  "https://miamioh.edu/fsb/directory/?up=/query/all/all/Management/all"
+)
+
+fsb_directory = data.frame()
+
+for (url in dept_urls) {
+  webpage = rvest::read_html(url)
+  
+  rows = webpage |>
+    rvest::html_elements("tr")
+  
+  department = rows |>
+    rvest::html_element("td:nth-child(1)") |>
+    rvest::html_text2()
+  
+  name = rows |>
+    rvest::html_element("td:nth-child(3) a") |>
+    rvest::html_text2()
+  
+  website = rows |>
+    rvest::html_element("td:nth-child(3) a") |>
+    rvest::html_attr("href")
+  
+  person_info = rows |>
+    rvest::html_element("td:nth-child(3)") |>
+    rvest::html_text2()
+  
+  position = stringr::str_remove(
+    person_info,
+    stringr::fixed(name)
+  ) |>
+    stringr::str_squish()
+  
+df = data.frame(
+  department = department,
+  name = name,
+  position = position,
+  website = website
+)
+df = df |>
+  dplyr::filter(!is.na(name))
+
+fsb_directory = rbind(fsb_directory, df)
+}
+
+
+head(fsb_directory)
+```
+
